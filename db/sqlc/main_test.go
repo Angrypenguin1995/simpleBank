@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/lib/libpq"
+	_ "github.com/lib/pq"
 )
 
 const (
