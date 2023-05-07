@@ -1,0 +1,28 @@
+createpostgres:
+	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+
+createdb:
+	docker exec -it postgres12 createdb --username=root --owner=root simple_bank
+
+dropdb:
+	docker exec -it postgres12 dropdb simple_bank
+
+start_postgres12:
+	docker start postgres12
+
+start_postgres12_and_connect:
+	docker start postgres12 /bin/sh
+
+stop_postgres12:
+	docker stop postgres12
+
+simple_bank_migrate_up:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" --verbose up
+
+simple_bank_migrate_down:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" --verbose down
+
+sqlc_generate:
+	sqlc generate
+
+.PHONY: createpostgres createdb dropdb
