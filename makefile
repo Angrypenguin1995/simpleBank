@@ -37,4 +37,7 @@ sqlc_generate:
 run_test:
 	go test -v -cover ./...
 
+start_server:
+	go run main.go
+
 .PHONY: createpostgres createdb dropdb
