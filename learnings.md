@@ -29,3 +29,18 @@
 2. Override existing values, set default values
 3. Read config from remote system like etcd,Consul etc
 4. Live watching and writing config file
+
+## Mocking database for running tests instead of using normal database
+
+### Independent Tests
+* Independent tests are better handled with mock dtabase because they are writingand reading data from memory and not a database so tests dont need to worry about other tests hogging each other.
+
+### Faster Tests
+* Since the mimic database is in memory, it reduces a lot of time used intalking to database.
+
+### Test Coverage 
+* we can cover super edge cases like connection lost with database etc which are very very very rare in  real scenario.
+
+'''
+    mock database will work fine just like normal database because we have already tested tests in normal database till now and another thing is that this database is and the origianal database can and should have same interface thus reducing any issues that might happen bceause of improper configuration
+'''
