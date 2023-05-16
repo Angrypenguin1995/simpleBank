@@ -40,4 +40,7 @@ run_test:
 start_server:
 	go run main.go
 
+mockdb_storego:
+	 mockgen -package mockdb -destination db/mock/store.go github.com/angrypenguin1995/simple__bank/db/sqlc Store
+
 .PHONY: createpostgres createdb dropdb

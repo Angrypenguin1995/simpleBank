@@ -44,3 +44,6 @@
 '''
     mock database will work fine just like normal database because we have already tested tests in normal database till now and another thing is that this database is and the origianal database can and should have same interface thus reducing any issues that might happen bceause of improper configuration
 '''
+* Mock Databases can be implemented in 2 ways 
+    1. Using a in memory store
+    2. using stubs which mimic database
