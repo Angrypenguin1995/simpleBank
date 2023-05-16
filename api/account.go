@@ -60,22 +60,26 @@ func (server *Server) getAccount(ctx *gin.Context) {
 }
 
 type listAccountRequest struct {
-	pageId   int `uri:"page_id" binding:"required,min=1"`
-	pageSize int `uri:"page_size" binding:"required,min=5,max=10"`
+	PageId   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
 func (server *Server) listAccount(ctx *gin.Context) {
 	var req listAccountRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	var arg db.ListAccountsParams
-	arg.Limit = int32(req.pageSize)
-	arg.Offset = int32((req.pageId - 1) * req.pageSize)
-
-	accountsList, err := server.store.ListAccounts(ctx, arg){
-		
+	arg := db.ListAccountsParams{
+		Offset: (req.PageId - 1) * req.PageSize,
+		Limit:  req.PageSize,
 	}
+
+	accounts, err := server.store.ListAccounts(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, accounts)
 }
