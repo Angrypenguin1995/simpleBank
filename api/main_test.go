@@ -1,15 +1,15 @@
 package api
 
 import (
-	"log"
+	"os"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestMain(m *testing.M) {
-	config, err := util.loadConfig("../..")
-	if err != nil {
-		log.Fatal("cannot load config:", err)
-	}
 
-	testDB
+	gin.SetMode(gin.TestMode)
+
+	os.Exit(m.Run())
 }

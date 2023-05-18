@@ -13,6 +13,7 @@ import (
 	mockdb "github.com/angrypenguin1995/simple__bank/db/mock"
 	db "github.com/angrypenguin1995/simple__bank/db/sqlc"
 	"github.com/angrypenguin1995/simple__bank/util"
+	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -101,6 +102,35 @@ func TestGetAccountAPI(t *testing.T) {
 		})
 	}
 
+}
+
+func TestCreateAccount(t *testing.T) {
+	var testCases = []struct {
+		name      string
+		body      gin.H
+		setupAuth func(t *testing.T, request http.Request, tokenmaker token.Maker)
+	}{}
+
+	for i := range testCases {
+		tc := testCases[i]
+		t.Run(tc.name, func(t *testing.T) {
+			control := gomock.NewController(t)
+			defer control.Finish()
+
+			store := mockdb.NewMockStore(control)
+			tc.buildStubs(store)
+
+			server := NewServer(store)
+			recorder := httptest.NewRecorder()
+
+			//since this is a post call, there will be data involved, so lets unmarshal the data first
+			data, err := json.Marshal(tc.body)
+			require.NoError(t, err)
+
+			url := fmt.Sprintf("/accounts")
+			request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
+		})
+	}
 }
 
 func randomAccount() db.Account {
