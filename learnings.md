@@ -47,3 +47,33 @@
 * Mock Databases can be implemented in 2 ways 
     1. Using a in memory store
     2. using stubs which mimic database
+
+# why PASETO over JWT
+* PASETO stands for Platform Agnostic Security TOken
+* Unlike JWT, PASETO encrypts both data and signature with stronger encryption algorithms
+* at any point of time, only two PASETO versions are supported, Each version has 1 stronger cipher suite
+*  Developers don't choose algorithm for security and just choose version of PASETO, so they dont have to worry about having knowledge on security related issues
+
+PASETO v1
+v1 : Compatible with legacy system 
+* Local <symmetric Key>
+  * Authenticated Encryption
+  * AES256 CTR + HMAC SHA384
+* Public: <Asymmetric Key>
+  * Digital Signature
+  * RSA PSS + SHA384
+  * 
+v2 : Recommended Version
+* Local <symmetric Key>
+  * Authenticated Encryption
+  * xChaCha20-Poly1305
+* Public: <Asymmetric Key>
+  * Digital Signature
+  * Ed25519[EdDSA + Curve22519]
+
+
+PASETO Token Structure:
+```version.purpose.encryptedData.Footer```
+version : Version of PASETO Token
+Purpose : Local/public etc, This is encrypted,authenticated
+Payloa 

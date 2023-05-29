@@ -46,6 +46,7 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
 		if ok && errors.Is(verr.Inner, ErrExpiredToken) {
 			return nil, ErrExpiredToken
 		}
+		return nil, ErrInvalidToken
 	}
 	payload, ok := jwtToken.Claims.(*Payload)
 	if !ok {
