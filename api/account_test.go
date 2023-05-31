@@ -87,7 +87,7 @@ func TestGetAccountAPI(t *testing.T) {
 			tc.buildStubs(store)
 
 			// start test server and send request
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			url := fmt.Sprintf("/accounts/%d", tc.accountID)
@@ -193,7 +193,7 @@ func TestCreateAccountAPI(t *testing.T) {
 			store := mockdb.NewMockStore(control)
 			tc.buildStubs(store)
 
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			//since this is a post call, there will be data involved, so lets unmarshal the data first
@@ -304,7 +304,7 @@ func TestListAccountsAPI(t *testing.T) {
 			store := mockdb.NewMockStore(control)
 			tc.buildStubs(store)
 
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			url := fmt.Sprintf("/accounts")
