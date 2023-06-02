@@ -14,11 +14,7 @@ start_postgres12:
 	docker start postgres12
 
 start_postgres12_and_connect:
-	docker start postgres12 /bin/sh
-
-stop_postgres12:
-	docker stop postgres12
-
+	docker start postgres12 /7528ef280d2377cb04096f284c43e76460c75ef2c8d65560b4310dffd82f797e
 simple_bank_migrate_up:
 	migrate -path db/migration -database "postgresql://root:password@localhost:5432/simple_bank?sslmode=disable" --verbose up
 
@@ -48,5 +44,8 @@ start_server:
 
 mockdb_storego:
 	mockgen -package mockdb -destination db/mock/store.go github.com/angrypenguin1995/simple__bank/db/sqlc Store
+
+run_simplebank_in_simplebank_network:
+	docker run --name simplebank --network bank-network -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:password@postgres12:5432/simple_bank?sslmode=disable" simplebank:latest
 
 .PHONY: createpostgres createdb dropdb
