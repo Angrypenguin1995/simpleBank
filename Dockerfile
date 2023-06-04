@@ -23,7 +23,7 @@ COPY . .
 # RUN go mod download
 # This is the place where we enter 
 RUN go build -o main main.go
-RUN apk add curl
+RUN apk --no-cache add curl
 RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
 
 # RUN STAGE
@@ -38,9 +38,20 @@ COPY start.sh .
 COPY wait-for.sh .
 COPY db/migration ./migration
 
+# # Add network configuration
+# ARG NETWORK_NAME=simple_bank_network
+# ENV NETWORK_NAME=$NETWORK_NAME
+
+# # Specify network during container creation
+# ARG NETWORK_SUBNET=172.20.0.0/16
+# ENV NETWORK_SUBNET=$NETWORK_SUBNET
+
+
 # #the port to expose- doesnt have any consequnce on build but is used for when people want to implement it
 EXPOSE 8080
+EXPOSE 5432
 
 # #command to run on start of file
+# CMD ["/app/main""--network", "$NETWORK_NAME", "--subnet", "$NETWORK_SUBNET"]
 CMD ["/app/main"]
 ENTRYPOINT [ "/app/start.sh" ]
