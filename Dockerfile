@@ -23,6 +23,8 @@ COPY . .
 # RUN go mod download
 # This is the place where we enter 
 RUN go build -o main main.go
+RUN apk add curl
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
 
 # RUN STAGE
 # this specifies the base file for image is from alpine:3.18
@@ -30,10 +32,15 @@ FROM alpine:3.18
 WORKDIR /app 
 #  we are copying files from builder to working directroy in image
 COPY --from=builder /app/main .
+COPY --from=builder /app/migrate ./migrate
 COPY app.env .
+COPY start.sh .
+COPY wait-for.sh .
+COPY db/migration ./migration
 
 # #the port to expose- doesnt have any consequnce on build but is used for when people want to implement it
 EXPOSE 8080
 
 # #command to run on start of file
 CMD ["/app/main"]
+ENTRYPOINT [ "/app/start.sh" ]
