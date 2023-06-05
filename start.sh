@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
-echo "load environment variables from env file"
+echo "load environment variables from env file "
 source /app/app.env                                                                                                                                                                                                                                                                      
 
 echo "run db migration"
