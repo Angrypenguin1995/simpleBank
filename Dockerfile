@@ -49,7 +49,7 @@ COPY db/migration ./migration
 
 # #the port to expose- doesnt have any consequnce on build but is used for when people want to implement it
 EXPOSE 8080
-EXPOSE 5432
+# EXPOSE 5432
 
 # #command to run on start of file
 # CMD ["/app/main""--network", "$NETWORK_NAME", "--subnet", "$NETWORK_SUBNET"]
