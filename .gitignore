@@ -2,3 +2,4 @@
 migrate
 vendor/
 *.log
+.github/workflows/deploy.yml

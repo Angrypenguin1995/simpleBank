@@ -42,25 +42,25 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 	}
 
 	if session.IsBlocked {
-		err := fmt.Errorf("looks like session is invalid because it is blocked", "")
+		err := fmt.Errorf("looks like session is invalid because it is blocked %s", "")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
 	if session.Username != refreshPayload.Username {
-		err := fmt.Errorf("looks like session is invalid because of incorrect user", "")
+		err := fmt.Errorf("looks like session is invalid because of incorrect user %s", "")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
 	if session.RefreshToken != req.RefreshToken {
-		err := fmt.Errorf("looks like session is invalid because of invalid refresh tokem", "")
+		err := fmt.Errorf("looks like session is invalid because of invalid refresh token %s", "")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
 	if time.Now().After(session.ExpiresAt) {
-		err := fmt.Errorf("session expired", "")
+		err := fmt.Errorf("session expired %s", "")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 	}
 
