@@ -16,6 +16,7 @@ import (
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func main() {
@@ -77,7 +78,8 @@ func runGatewayServer(config util.Config, store db.Store) {
 		log.Fatal("cannot create server:", err)
 	}
 
-	grpcMux := runtime.NewServeMux()
+	runtimeOption := getProtoNameOptions()
+	grpcMux := runtime.NewServeMux(runtimeOption)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -101,4 +103,17 @@ func runGatewayServer(config util.Config, store db.Store) {
 	if err != nil {
 		log.Fatal("cannot start HTTP gateway server: ", err)
 	}
+}
+
+func getProtoNameOptions() runtime.ServeMuxOption {
+	option := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions: protojson.MarshalOptions{
+			UseProtoNames: true,
+		},
+		UnmarshalOptions: protojson.UnmarshalOptions{
+			DiscardUnknown: true,
+		},
+	})
+
+	return option
 }

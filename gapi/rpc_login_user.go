@@ -74,13 +74,13 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		// ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return nil, status.Errorf(codes.Internal, "error creating Refresh token %s", err)
 	}
-
+	metadata := server.extractMetadata(ctx)
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
 		ID:           refreshPayload.ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
-		UserAgent:    "", //ctx.Request.UserAgent(),
-		ClientIp:     "", //ctx.ClientIP(),
+		UserAgent:    metadata.UserAgent, //ctx.Request.UserAgent(),
+		ClientIp:     metadata.ClientIP,  //ctx.ClientIP(),
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
