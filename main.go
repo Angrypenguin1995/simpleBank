@@ -48,13 +48,13 @@ func runGrpcServer(config util.Config, store db.Store) {
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
-		log.Fatal("cannot create listener:")
+		log.Fatal("cannot create listener:", err)
 	}
 
 	log.Printf("GRPC Server listening on %s", listener.Addr().String())
 	err = grpcServer.Serve(listener)
 	if err != nil {
-		log.Fatal("cannot start Grpc server")
+		log.Fatal("cannot start Grpc server: ", err)
 	}
 }
 
@@ -82,29 +82,23 @@ func runGatewayServer(config util.Config, store db.Store) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	err = pb.RegisterSimpleBankHandlerService(ctx, grpcMux, server)
+	err = pb.RegisterSimpleBankHandlerServer(ctx, grpcMux, server)
 	if err != nil {
-		log.Fatal("cannot register handler service")
+		log.Fatal("cannot register handler service:", err)
 	}
 
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	listener, err := net.Listen("tcp", config.GRPCServerAddress)
+	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {
-		log.Fatal("cannot create listener:")
+		log.Fatal("cannot create listener:", err)
 	}
 
 	log.Printf("start HTTP gateway server at %s", listener.Addr().String())
 	err = http.Serve(listener, mux)
 
 	if err != nil {
-		log.Fatal("cannot start HTTP gateway server")
-	}
-
-	log.Printf("GRPC Server listening on %s", listener.Addr().String())
-	err = grpcServer.Serve(listener)
-	if err != nil {
-		log.Fatal("cannot start Grpc server")
+		log.Fatal("cannot start HTTP gateway server: ", err)
 	}
 }

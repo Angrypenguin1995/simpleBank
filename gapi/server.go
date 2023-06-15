@@ -20,7 +20,7 @@ type Server struct {
 // New Server creates a new GRPC server
 func NewServer(config util.Config, store db.Store) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
-	// tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey) //uncomment this line and comment above line for using JWT isntead of PASETO for token
+	// tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey) //uncomment this line and comment above line for using JWT instead of PASETO for token
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create a tokenmaker: %w", err)
 	}
