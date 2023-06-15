@@ -7,6 +7,8 @@ import (
 	db "github.com/angrypenguin1995/simple__bank/db/sqlc"
 	"github.com/angrypenguin1995/simple__bank/pb"
 	"github.com/angrypenguin1995/simple__bank/util"
+	"github.com/angrypenguin1995/simple__bank/val"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,32 +16,11 @@ import (
 
 func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.LoginUserResponse, error) {
 
-	// hashedPassword, err := util.HashPassword(req.GetPassword())
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.Internal, "Failed to hash password :%s", err)
-	// }
+	violations := ValidateLoginUserRequest(req)
 
-	// args := db.CreateUserParams{
-	// 	Username:       req.GetUsername(),
-	// 	HashedPassword: hashedPassword,
-	// 	FullName:       req.GetFullName(),
-	// 	Email:          req.GetEmail(),
-	// }
-
-	// user, err := server.store.CreateUser(ctx, args)
-	// if err != nil {
-	// 	if pqErr, ok := err.(*pq.Error); ok {
-	// 		switch pqErr.Code.Name() {
-	// 		case "unique_violation":
-	// 			return nil, status.Errorf(codes.AlreadyExists, "User %s already exists", err)
-	// 		}
-	// 	}
-	// 	return nil, status.Errorf(codes.Internal, "Failed to create user : %s", err)
-	// }
-	// resp := &pb.CreateUserResponse{
-	// 	User: convertUser(user),
-	// }
-	// return resp, nil
+	if violations != nil {
+		return nil, invalidArgumentError(violations)
+	}
 
 	user, err := server.store.GetUser(ctx, req.GetUsername())
 	if err != nil {
@@ -99,4 +80,16 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		RefreshTokenExpiresat: timestamppb.New(refreshPayload.ExpiredAt),
 	}
 	return rsp, nil
+}
+
+func ValidateLoginUserRequest(req *pb.LoginUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+	if err := val.ValidateUsername(req.GetUsername()); err != nil {
+		violations = append(violations, fieldViolation("username ", err))
+	}
+
+	if err := val.ValidatePassword(req.GetPassword()); err != nil {
+		violations = append(violations, fieldViolation("password", err))
+	}
+
+	return violations
 }
